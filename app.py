@@ -72,4 +72,4 @@ def lookup():
 
 if __name__ == '__main__':
     SYMBOLS = load_symbols('WIKI-datasets-codes.csv')
-    app.run(port=33507, debug=True)
+    app.run(port=33507)
