@@ -46,6 +46,7 @@ def get_examples():
     
 
 app = Flask(__name__)
+SYMBOLS = load_symbols('WIKI-datasets-codes.csv')
 
 @app.route('/')
 def index():
@@ -71,5 +72,4 @@ def lookup():
 
 
 if __name__ == '__main__':
-    SYMBOLS = load_symbols('WIKI-datasets-codes.csv')
     app.run(port=33507)
