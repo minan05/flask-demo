@@ -21,12 +21,18 @@ def load_data(symbol, start_date, end_date):
 def get_plot(symbol):
     now = dt.datetime.now()
     data = load_data(symbol, now - dt.timedelta(31), now)
-    if data is not None:
-        plot = figure(x_axis_type='datetime')
-        plot.line(data.Date, data.Close)
-        return components(plot)
+    if data is None:
+        return '', ERROR_MESSAGE % symbol
     
-    return '', ERROR_MESSAGE % symbol
+    plot = figure(x_axis_type='datetime')
+    datelist = data.Date.tolist()
+    plot.patch(datelist + datelist[::-1], data.Low.tolist() + data.High.tolist()[::-1],
+               alpha=0.5, line_width=1, legend='High/Low')
+    plot.line(data.Date, data.Open, line_color='green', line_width=3, legend='Open', line_join='bevel')
+    plot.line(data.Date, data.Close, line_color='orange', line_width=3, legend='Close', line_join='bevel')
+    plot.yaxis.axis_label = 'Price'
+    
+    return components(plot)
 
 app = Flask(__name__)
 
