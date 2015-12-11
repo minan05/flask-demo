@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Unknown listing: {{ symbol }}{% endblock %}
 {% block content %}
-  <p>Invalid.</p>
+  <h1>Unknown Listing</h1>
+  <p>Sorry, we're not familiar with the symbol "{{ symbol }}".  Perhaps you want to try one of these: {{ examples|safe }}?</p>
 {% endblock %}

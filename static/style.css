@@ -1,0 +1,27 @@
+body {
+    width: 600px;
+    margin: 2em auto;
+}
+
+form {
+    text-align: center;
+    margin-top: 2em;
+}
+
+input[name="symbol"] {
+    width: 8em;
+}
+
+input[name="days"] {
+    width: 4em;
+    text-align: right;
+}
+
+footer {
+    font-size: smaller;
+    margin-top: 2em;
+}
+
+h1 {
+    text-align: center;
+}

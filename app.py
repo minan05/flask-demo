@@ -5,8 +5,7 @@ import requests
 import pandas
 import datetime as dt
 from StringIO import StringIO
-
-ERROR_MESSAGE = "Could not load data for %s."
+import random
 
 class DataLoadException(Exception):
     pass
@@ -22,7 +21,7 @@ def load_data(symbol, start_date, end_date):
     response = requests.get(url, params=params)
     print url, response.url, response.status_code
     if response.status_code != requests.codes.ok:
-        raise DataLoadExecption('Server replied with status %i.' % response.status_code)
+        raise DataLoadException('Server replied with status %i.' % response.status_code)
     
     return pandas.read_csv(StringIO(response.text), parse_dates=['Date'])
 
@@ -41,11 +40,16 @@ def get_plot(symbol, days):
     
     return components(plot)
 
+def get_examples():
+    keys = random.sample(SYMBOLS.keys(), 3)
+    return ', '.join('<a href="/lookup?symbol=%s">%s</a>' % (k, SYMBOLS[k]) for k in keys)
+    
+
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', symbol='', days=31)
+    return render_template('index.html', symbol='', days=31, examples=get_examples())
 
 @app.route('/lookup')
 def lookup():
@@ -55,13 +59,13 @@ def lookup():
     except ValueError:
         days = 31
     if symbol not in SYMBOLS:
-        return render_template('invalid.html', symbol=symbol, days=days)
+        return render_template('invalid.html', symbol=symbol, days=days, examples=get_examples())
     
     try:
         script, div = get_plot(symbol, days)
     except Exception as e:
         # This could be due to problems in getting the data or plotting it
-        return render_template('error.html', symbol=symbol, days=days, error=e.message)
+        return render_template('error.html', symbol=symbol, days=days, error=e.message), 500
     else:
         return render_template('lookup.html', symbol=symbol, days=days, plot_script=script, plot_div=div)
 
