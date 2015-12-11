@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block title %}{{ symbol }} Prices{% endblock %}
+{% block script %}{{ plot_script|safe }}{% endblock %}
+{% block content %}{{ plot_div|safe }}{% endblock %}
