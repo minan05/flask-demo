@@ -26,9 +26,9 @@ def load_data(symbol, start_date, end_date):
     
     return pandas.read_csv(StringIO(response.text), parse_dates=['Date'])
 
-def get_plot(symbol):
+def get_plot(symbol, days):
     now = dt.datetime.now()
-    data = load_data(symbol, now - dt.timedelta(31), now)
+    data = load_data(symbol, now - dt.timedelta(days), now)
     
     plot = figure(x_axis_type='datetime')
     datelist = data.Date.tolist()
@@ -45,21 +45,25 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', symbol='')
+    return render_template('index.html', symbol='', days=31)
 
 @app.route('/lookup')
 def lookup():
     symbol = request.args.get('symbol', '').upper()
+    try:
+        days = int(request.args.get('days', '31'))
+    except ValueError:
+        days = 31
     if symbol not in SYMBOLS:
-        return render_template('invalid.html', symbol=symbol)
+        return render_template('invalid.html', symbol=symbol, days=days)
     
     try:
-        script, div = get_plot(symbol)
+        script, div = get_plot(symbol, days)
     except Exception as e:
         # This could be due to problems in getting the data or plotting it
-        return render_template('error.html', symbol=symbol, error=e.message)
+        return render_template('error.html', symbol=symbol, days=days, error=e.message)
     else:
-        return render_template('lookup.html', symbol=symbol, plot_script=script, plot_div=div)
+        return render_template('lookup.html', symbol=symbol, days=days, plot_script=script, plot_div=div)
 
 
 if __name__ == '__main__':
